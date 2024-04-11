@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta viewport="width=device-width, initial-scale=1.0">
+<title>Công cụ tính giá nẹp đồng</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(145deg, #FFD700, #DAA520);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    #calculator {
+        width: 300px;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(145deg, #B8860B, #FFD700);
+        color: #8B0000;
+    }
+    input, select, button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid #8B0000;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        background: #FFD700;
+        color: #8B0000;
+    }
+    button {
+        background: #8B0000;
+        color: #FFD700;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #DAA520;
+    }
+    h3 {
+        text-align: center;
+        color: #8B0000;
+    }
+</style>
+</head>
+<body>
+<div id="calculator">
+    <h3>Công cụ tính giá nẹp đồng</h3>
+    <select id="type">
+        <option value="La">Nẹp La</option>
+        <option value="T">Nẹp T</option>
+        <option value="V">Nẹp V</option>
+        <option value="L">Nẹp L</option>
+        <option value="U">Nẹp U</option>
+    </select>
+    <input type="number" id="width" placeholder="Kích thước rộng (mm)" step="0.1" required>
+    <input type="number" id="thickness" placeholder="Kích thước dày (mm)" step="0.1" required>
+    <button onclick="calculatePrice()">Tính giá</button>
+    <p>Kết quả: <span id="result">0</span> VND</p>
+</div>
+
+<script>
+const prices = {
+    "0.8_58": 532078,
+    "0.8_95": 541933,
+    "1_25": 0,
+    "1_40": 409495,
+    "1_100": 439169,
+    "1_15": 522255,
+};
+
+function calculatePrice() {
+    var type = document.getElementById('type').value;
+    var width = parseFloat(document.getElementById('width').value).toFixed(1);
+    var thickness = parseFloat(document.getElementById('thickness').value).toFixed(1);
+    
+    if (type === "La") {
+        var exclusions = [
+            {width: 0.8, thickness: 58, price: 532078},
+            {width: 0.8, thickness: 95, price: 541933},
+            {width: 1, thickness: 25, price: 0},
+            {width: 1, thickness: 40, price: 409495},
+            {width: 1, thickness: 100, price: 439169},
+            {width: 1, thickness: 15, price: 522255},
+        ];
+
+        for (var exclusion of exclusions) {
+            if ((exclusion.width === parseFloat(width) && exclusion.thickness === parseFloat(thickness)) || 
+                (exclusion.width === parseFloat(thickness) && exclusion.thickness === parseFloat(width))) {
+                document.getElementById('result').innerText = exclusion.price + " VND";
+                return;
+            }
+        }
+
+        // Tính toán giá trị dựa trên công thức nếu không nằm trong các trường hợp loại trừ
+        var price = (parseFloat(width) / 1000) * (parseFloat(thickness) / 1000) * 8425 * 250000;
+        document.getElementById('result').innerText = price.toFixed(2) + " VND";
+    } else {
+        document.getElementById('result').innerText = "Vui lòng chọn Nẹp La để tính giá";
+    }
+}
+</script>
+</body>
+</html>
